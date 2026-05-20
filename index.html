@@ -551,11 +551,11 @@
       <div style="width: 100%; display: flex; flex-direction: column; gap: 7px; font-size: 0.72rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.03);">
           <span style="color: rgba(255, 255, 255, 0.6);">移動</span>
-          <span style="color: var(--cyan); font-weight: bold; font-family: 'Orbitron';">← →</span>
+          <span style="color: var(--cyan); font-weight: bold; font-family: 'Orbitron';">← → / A D</span>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.03);">
           <span style="color: rgba(255, 255, 255, 0.6);">右回転</span>
-          <span style="color: var(--cyan); font-weight: bold; font-family: 'Orbitron';">↑ / X</span>
+          <span style="color: var(--cyan); font-weight: bold; font-family: 'Orbitron';">↑ / X / W</span>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.03);">
           <span style="color: rgba(255, 255, 255, 0.6);">左回転</span>
@@ -563,7 +563,7 @@
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.03);">
           <span style="color: rgba(255, 255, 255, 0.6);">高速落下</span>
-          <span style="color: var(--cyan); font-weight: bold; font-family: 'Orbitron';">↓</span>
+          <span style="color: var(--cyan); font-weight: bold; font-family: 'Orbitron';">↓ / S</span>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.3); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.03);">
           <span style="color: rgba(255, 255, 255, 0.6);">即落下</span>
@@ -597,11 +597,11 @@
           <div style="text-align: center; font-weight: bold; color: var(--cyan); margin-bottom: 10px; font-family: 'Orbitron'; letter-spacing: 2px; text-shadow: var(--text-glow-cyan); border-bottom: 1px solid rgba(0, 242, 254, 0.2); padding-bottom: 4px;">CONTROLS / 操作方法</div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
             <span style="color: rgba(255,255,255,0.7);">移動</span>
-            <span style="color: var(--cyan); font-weight: 800; font-family: 'Orbitron';">←  →</span>
+            <span style="color: var(--cyan); font-weight: 800; font-family: 'Orbitron';">←  →  /  A  D</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
             <span style="color: rgba(255,255,255,0.7);">右回転 (時計回り)</span>
-            <span style="color: var(--cyan); font-weight: 800; font-family: 'Orbitron';">↑  /  X</span>
+            <span style="color: var(--cyan); font-weight: 800; font-family: 'Orbitron';">↑  /  X  /  W</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
             <span style="color: rgba(255,255,255,0.7);">左回転 (反時計回り)</span>
@@ -609,7 +609,7 @@
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
             <span style="color: rgba(255,255,255,0.7);">ソフトドロップ</span>
-            <span style="color: var(--cyan); font-weight: 800; font-family: 'Orbitron';">↓</span>
+            <span style="color: var(--cyan); font-weight: 800; font-family: 'Orbitron';">↓  /  S</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
             <span style="color: rgba(255,255,255,0.7);">ハードドロップ</span>
@@ -696,11 +696,14 @@
       <div class="guide-item">
         <span class="key-btn">←</span>
         <span class="key-btn">→</span>
+        <span class="key-btn">A</span>
+        <span class="key-btn">D</span>
         <span>左右移動</span>
       </div>
       <div class="guide-item">
         <span class="key-btn">↑</span>
         <span class="key-btn">X</span>
+        <span class="key-btn">W</span>
         <span>右回転</span>
       </div>
       <div class="guide-item">
@@ -710,6 +713,7 @@
       </div>
       <div class="guide-item">
         <span class="key-btn">↓</span>
+        <span class="key-btn">S</span>
         <span>ソフトドロップ</span>
       </div>
       <div class="guide-item">
@@ -1768,8 +1772,8 @@
 
     // KEYBOARD INPUT BINDINGS
     window.addEventListener('keydown', event => {
-      // Spacebar scrolling default prevention
-      if (['Space', 'ArrowUp', 'ArrowDown'].includes(event.code) && game.gameState === 'PLAYING') {
+      // Spacebar/WASD scrolling default prevention
+      if (['Space', 'ArrowUp', 'ArrowDown', 'KeyW', 'KeyS'].includes(event.code) && game.gameState === 'PLAYING') {
         event.preventDefault();
       }
 
@@ -1790,16 +1794,20 @@
       if (game.gameState === 'PLAYING') {
         switch (event.code) {
           case 'ArrowLeft':
+          case 'KeyA':
             game.moveLeft();
             break;
           case 'ArrowRight':
+          case 'KeyD':
             game.moveRight();
             break;
           case 'ArrowDown':
+          case 'KeyS':
             game.softDrop();
             break;
           case 'ArrowUp':
           case 'KeyX':
+          case 'KeyW':
             game.rotate(true); // Rotate Clockwise
             break;
           case 'KeyZ':
