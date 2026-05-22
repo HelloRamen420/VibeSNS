@@ -2,41 +2,87 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SNS App</title>
+    <title>K.K book</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .container {
-            margin-top: 50px;
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        h1 {
-            color: #1da1f2;
-        }
-        p {
-            font-size: 1.1em;
-            color: #666;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: #f0f2f5; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 600px; background: white; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.05); padding: 20px; box-sizing: border-box; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+        .post-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
+        textarea { width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; resize: none; box-sizing: border-box;}
+        button { align-self: flex-end; padding: 8px 16px; background-color: #1da1f2; color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        .post { border-bottom: 1px solid #eee; padding: 15px 0; }
+        .post-author { font-weight: bold; margin-bottom: 5px; }
+        .post-content { margin-bottom: 10px; }
+        .post-actions { display: flex; gap: 15px; font-size: 0.9em; color: #666; }
+        .post-actions form { display: inline; }
+        .action-btn { background: none; color: #666; border: none; cursor: pointer; padding: 0; font-weight: normal; }
+        .action-btn:hover { color: #1da1f2; text-decoration: underline; }
+        .replies { margin-left: 20px; border-left: 2px solid #eee; padding-left: 15px; margin-top: 10px; }
+        .reply-form { margin-top: 10px; display: flex; gap: 10px; }
+        .reply-form input { flex: 1; padding: 5px; border-radius: 15px; border: 1px solid #ccc; }
+        .reply-form button { padding: 5px 10px; font-size: 0.8em; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to the SNS!</h1>
-        <p>ここはタイムラインのプレースホルダーです。</p>
-        <p>これからVibe Codingで機能をどんどん追加していきます。</p>
+        <div class="header">
+            <h2>K.K book</h2>
+            <div>
+                <span>{{ current_user.username }}</span>
+                <a href="{{ url_for('logout') }}" style="margin-left: 10px; color: red; text-decoration: none;">Logout</a>
+            </div>
+        </div>
+
+        <form class="post-form" method="POST" action="{{ url_for('create_post') }}">
+            <textarea name="content" placeholder="What's happening?" required></textarea>
+            <button type="submit">Post</button>
+        </form>
+
+        <div class="timeline">
+            {% for post in posts %}
+            <div class="post">
+                <div class="post-author">{{ post.author.username }}</div>
+                <div class="post-content">{{ post.content }}</div>
+                <div class="post-actions">
+                    <form method="POST" action="{{ url_for('react_post', post_id=post.id) }}">
+                        <input type="hidden" name="reaction_type" value="like">
+                        {% set liked = post.reactions.filter_by(user_id=current_user.id, reaction_type='like').first() %}
+                        <button type="submit" class="action-btn" style="color: {{ 'red' if liked else '#666' }};">
+                            ❤️ {{ post.reactions.filter_by(reaction_type='like').count() }}
+                        </button>
+                    </form>
+                    <span>💬 {{ post.replies.count() }}</span>
+                </div>
+                
+                <!-- Reply Form -->
+                <form class="reply-form" method="POST" action="{{ url_for('reply_post', post_id=post.id) }}">
+                    <input type="text" name="content" placeholder="Reply..." required>
+                    <button type="submit">Reply</button>
+                </form>
+
+                <!-- Replies -->
+                {% if post.replies.count() > 0 %}
+                <div class="replies">
+                    {% for reply in post.replies.order_by(post.created_at.desc()).all() %}
+                    <div class="post" style="border: none; padding-bottom: 5px;">
+                        <div class="post-author">{{ reply.author.username }}</div>
+                        <div class="post-content">{{ reply.content }}</div>
+                        <div class="post-actions" style="margin-top: 5px;">
+                            <form method="POST" action="{{ url_for('react_post', post_id=reply.id) }}">
+                                <input type="hidden" name="reaction_type" value="like">
+                                {% set reply_liked = reply.reactions.filter_by(user_id=current_user.id, reaction_type='like').first() %}
+                                <button type="submit" class="action-btn" style="color: {{ 'red' if reply_liked else '#666' }};">
+                                    ❤️ {{ reply.reactions.filter_by(reaction_type='like').count() }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </body>
 </html>
