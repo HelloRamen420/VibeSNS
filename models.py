@@ -21,6 +21,10 @@ class Post(db.Model):
     replies = db.relationship('Post', backref=db.backref('parent', remote_side=[id]), lazy='dynamic')
     reactions = db.relationship('Reaction', backref='post', lazy='dynamic', cascade="all, delete-orphan")
 
+    @property
+    def ordered_replies(self):
+        return self.replies.order_by(Post.created_at.desc()).all()
+
 class Reaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

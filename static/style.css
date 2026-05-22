@@ -1,0 +1,811 @@
+/* K.K book Premium Design System & Theme Stylesheet */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-base: #080c14;
+    --bg-surface: #111827;
+    --bg-surface-hover: #1f2937;
+    --bg-glass: rgba(17, 24, 39, 0.7);
+    --border-color: #1f2937;
+    --border-color-glow: #374151;
+    
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
+    
+    --accent: #38bdf8;
+    --accent-hover: #0ea5e9;
+    --accent-glow: rgba(56, 189, 248, 0.15);
+    --accent-gradient: linear-gradient(135deg, #38bdf8, #2563eb);
+    
+    --like-color: #ef4444;
+    --like-glow: rgba(239, 68, 68, 0.15);
+    --reply-color: #10b981;
+    --reply-glow: rgba(16, 185, 129, 0.15);
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.2);
+    
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+
+    /* Theme-specific gradients and hover overlays */
+    --title-gradient: linear-gradient(135deg, #ffffff, #9ca3af);
+    --bg-header-glass: rgba(8, 12, 20, 0.85);
+    --post-hover-bg: rgba(255, 255, 255, 0.015);
+}
+
+html[data-theme="light"] {
+    --bg-base: #f3f4f6;
+    --bg-surface: #ffffff;
+    --bg-surface-hover: #f1f5f9;
+    --bg-glass: rgba(255, 255, 255, 0.7);
+    --border-color: #e2e8f0;
+    --border-color-glow: #cbd5e1;
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    
+    --accent: #0ea5e9;
+    --accent-hover: #0284c7;
+    --accent-glow: rgba(14, 165, 233, 0.1);
+    --accent-gradient: linear-gradient(135deg, #0ea5e9, #2563eb);
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.01);
+    --shadow-glow: 0 0 20px rgba(14, 165, 233, 0.1);
+
+    /* Theme-specific gradients and hover overlays (Light mode overrides) */
+    --title-gradient: linear-gradient(135deg, #0f172a, #475569);
+    --bg-header-glass: rgba(255, 255, 255, 0.85);
+    --post-hover-bg: rgba(0, 0, 0, 0.015);
+}
+
+/* ==========================================
+   Global Reset & Base Styles
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    min-height: 100vh;
+    overflow-y: scroll;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.post-card, .composer-card, .timeline-header, .sidebar-left, .user-profile-card, .form-input, .reply-form-inline, .auth-container {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+button, input, textarea {
+    font-family: inherit;
+    color: inherit;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--border-color-glow);
+}
+
+/* ==========================================
+   Animations
+   ========================================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
+
+@keyframes flashFade {
+    0% { opacity: 0; transform: translateY(-10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
+
+.animate-fade-in {
+    animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ==========================================
+   Authentication Pages Layout (Glassmorphism)
+   ========================================== */
+.auth-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.08), transparent 40%),
+                radial-gradient(circle at bottom left, rgba(37, 99, 235, 0.05), transparent 40%),
+                var(--bg-base);
+}
+
+.auth-container {
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.auth-header {
+    margin-bottom: 28px;
+}
+
+.auth-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    background: var(--accent-gradient);
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-glow);
+}
+
+.auth-logo svg {
+    width: 28px;
+    height: 28px;
+    fill: white;
+}
+
+.auth-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: var(--title-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.025em;
+}
+
+.auth-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-top: 6px;
+}
+
+/* Form Styles */
+.form-group {
+    position: relative;
+    margin-bottom: 18px;
+    text-align: left;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent-gradient);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: white;
+    font-weight: 600;
+    font-size: 0.975rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary:hover {
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.auth-footer {
+    margin-top: 24px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.error-banner {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-left: 3px solid var(--like-color);
+    color: #fca5a5;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+/* ==========================================
+   Main Application Layout (2-Column System)
+   ========================================== */
+.app-container {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    max-width: 960px;
+    margin: 0 auto;
+    min-height: 100vh;
+    position: relative;
+}
+
+@media (max-width: 1024px) {
+    .app-container {
+        grid-template-columns: 80px 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .app-container {
+        grid-template-columns: 1fr;
+    }
+    .sidebar-left {
+        display: none !important;
+    }
+}
+
+/* ==========================================
+   Left Sidebar Navigation
+   ========================================== */
+.sidebar-left {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 24px;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.brand-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: var(--accent-gradient);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-glow);
+}
+
+.brand-logo svg {
+    width: 20px;
+    height: 20px;
+    fill: white;
+}
+
+.brand-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    background: var(--title-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Navigation items */
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    transition: stroke 0.2s ease;
+}
+
+.nav-item:hover {
+    background-color: var(--bg-surface-hover);
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.nav-item.active {
+    color: var(--accent);
+}
+
+.nav-item.active svg {
+    stroke: var(--accent);
+}
+
+/* User Card at bottom */
+.user-profile-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border-radius: var(--radius-full);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar-placeholder {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, #2563eb, #38bdf8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    color: white;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-sm);
+}
+
+.username-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btn-logout {
+    color: var(--text-muted);
+    padding: 6px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+    color: var(--like-color);
+    background-color: var(--like-glow);
+}
+
+/* ==========================================
+   Center Feed / Timeline
+   ========================================== */
+.timeline {
+    border-right: 1px solid var(--border-color);
+    min-height: 100vh;
+}
+
+.timeline-header {
+    position: sticky;
+    top: 0;
+    background: var(--bg-header-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 20px;
+    z-index: 10;
+}
+
+.timeline-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+/* Post Composer Form */
+.composer-card {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    gap: 16px;
+}
+
+.composer-avatar {
+    margin-top: 4px;
+}
+
+.composer-form {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.composer-textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    resize: none;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    padding: 8px 0;
+    min-height: 50px;
+    max-height: 300px;
+}
+
+.composer-textarea:focus {
+    outline: none;
+}
+
+.composer-textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.composer-actions {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid var(--border-color);
+    padding-top: 14px;
+    margin-top: 12px;
+}
+
+.btn-post {
+    padding: 8px 20px;
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-post:hover {
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-1px);
+}
+
+.btn-post:active {
+    transform: translateY(0);
+}
+
+/* ==========================================
+   Post Card & Thread Styles
+   ========================================== */
+.post-card {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    gap: 16px;
+    transition: background-color 0.2s ease;
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+.post-card:hover {
+    background-color: var(--post-hover-bg);
+}
+
+.post-avatar-wrapper {
+    flex-shrink: 0;
+}
+
+.post-main {
+    flex-grow: 1;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.post-username {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.post-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.post-body {
+    font-size: 0.975rem;
+    color: var(--text-primary);
+    word-break: break-word;
+    white-space: pre-wrap;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+/* Interactive Post Actions */
+.post-footer {
+    display: flex;
+    gap: 40px;
+    margin-top: 12px;
+}
+
+.action-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.action-trigger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-full);
+    color: var(--text-muted);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-trigger svg {
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-count {
+    font-size: 0.825rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-left: 6px;
+    transition: color 0.2s ease;
+}
+
+/* Hover & Active States (Like Button) */
+.action-like:hover .action-trigger {
+    color: var(--like-color);
+    background-color: var(--like-glow);
+}
+
+.action-like.liked .action-trigger {
+    color: var(--like-color);
+    animation: pop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.action-like.liked svg {
+    fill: var(--like-color);
+    stroke: var(--like-color);
+}
+
+.action-like.liked .action-count {
+    color: var(--like-color);
+}
+
+/* Hover & Active States (Reply Button) */
+.action-reply-trigger:hover .action-trigger {
+    color: var(--accent);
+    background-color: var(--accent-glow);
+}
+
+.action-reply-trigger .action-count:hover {
+    color: var(--accent);
+}
+
+/* ==========================================
+   Reply / Thread Section
+   ========================================== */
+.replies-section {
+    margin-left: 48px;
+    border-left: 2px solid var(--border-color);
+    padding-left: 16px;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Nested Reply Composer Form */
+.reply-composer-wrapper {
+    margin-top: 12px;
+    margin-left: 48px;
+}
+
+.reply-form-inline {
+    display: flex;
+    gap: 12px;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    padding: 4px 6px 4px 16px;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.reply-form-inline:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+}
+
+.reply-input-inline {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    padding: 8px 0;
+}
+
+.reply-input-inline:focus {
+    outline: none;
+}
+
+.reply-input-inline::placeholder {
+    color: var(--text-muted);
+}
+
+.btn-reply-submit {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    padding: 6px 16px;
+    font-size: 0.825rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-reply-submit:hover {
+    background-color: var(--accent-hover);
+}
+
+/* ==========================================
+   Theme Switching Elements (Premium Styles)
+   ========================================== */
+.auth-theme-toggle {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 100;
+}
+
+.btn-theme-toggle-round {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-color);
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.btn-theme-toggle-round:hover {
+    background-color: var(--bg-surface-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+    border-color: var(--accent);
+}
+
+.theme-icon {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.5s ease;
+}
+
+.btn-theme-toggle-round:hover .theme-icon {
+    transform: rotate(15deg);
+}
+
+.sidebar-theme-btn {
+    background: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+    outline: none;
+}

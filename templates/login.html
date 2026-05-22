@@ -2,30 +2,95 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Login - SNS App</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .auth-container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; width: 300px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background-color: #1da1f2; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        button:hover { background-color: #1a91da; }
-        .error { color: red; font-size: 0.9em; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン - K.K book</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        // Initial theme loader to prevent visual flash
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+            }
+        })();
+    </script>
 </head>
-<body>
+<body class="auth-body">
+    <!-- Floating Theme Toggle -->
+    <div class="auth-theme-toggle">
+        <button id="theme-toggle-btn" class="btn-theme-toggle-round" aria-label="テーマ切替" title="テーマ切替">
+            <svg id="theme-toggle-dark-icon" viewBox="0 0 24 24" class="theme-icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg id="theme-toggle-light-icon" viewBox="0 0 24 24" class="theme-icon"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+    </div>
     <div class="auth-container">
-        <h2>Login - K.K book</h2>
+        <div class="auth-header">
+            <div class="auth-logo">
+                <!-- Glowing Book Icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                    <path d="M6 6h10" />
+                    <path d="M6 10h10" />
+                </svg>
+            </div>
+            <h1 class="auth-title">K.K book</h1>
+            <p class="auth-subtitle font-sans">ログインして今起きていることを共有しましょう</p>
+        </div>
+
         {% with messages = get_flashed_messages() %}
             {% if messages %}
-                <div class="error">{{ messages[0] }}</div>
+                <div class="error-banner">
+                    {{ messages[0] }}
+                </div>
             {% endif %}
         {% endwith %}
+
         <form method="POST" action="{{ url_for('login') }}">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
+            <div class="form-group">
+                <label class="form-label" for="username">ユーザー名</label>
+                <input class="form-input" type="text" id="username" name="username" placeholder="ユーザー名を入力" required autocomplete="username">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="password">パスワード</label>
+                <input class="form-input" type="password" id="password" name="password" placeholder="パスワードを入力" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="btn-primary">ログイン</button>
         </form>
-        <p>Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
+
+        <div class="auth-footer">
+            <p>アカウントをお持ちでないですか？ <a href="{{ url_for('register') }}">新規登録</a></p>
+        </div>
     </div>
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        function updateThemeUI(theme) {
+            if (theme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                lightIcon.style.display = 'none';
+                darkIcon.style.display = 'block';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                lightIcon.style.display = 'block';
+                darkIcon.style.display = 'none';
+            }
+        }
+
+        // Initial Theme application from localStorage
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        updateThemeUI(currentTheme);
+
+        themeToggleBtn.addEventListener('click', () => {
+            const activeTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', activeTheme);
+            updateThemeUI(activeTheme);
+        });
+    </script>
 </body>
 </html>

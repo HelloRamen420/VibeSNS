@@ -2,87 +2,236 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>K.K book</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: #f0f2f5; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        .container { width: 600px; background: white; min-height: 100vh; box-shadow: 0 0 10px rgba(0,0,0,0.05); padding: 20px; box-sizing: border-box; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
-        .post-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
-        textarea { width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; resize: none; box-sizing: border-box;}
-        button { align-self: flex-end; padding: 8px 16px; background-color: #1da1f2; color: white; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; }
-        .post { border-bottom: 1px solid #eee; padding: 15px 0; }
-        .post-author { font-weight: bold; margin-bottom: 5px; }
-        .post-content { margin-bottom: 10px; }
-        .post-actions { display: flex; gap: 15px; font-size: 0.9em; color: #666; }
-        .post-actions form { display: inline; }
-        .action-btn { background: none; color: #666; border: none; cursor: pointer; padding: 0; font-weight: normal; }
-        .action-btn:hover { color: #1da1f2; text-decoration: underline; }
-        .replies { margin-left: 20px; border-left: 2px solid #eee; padding-left: 15px; margin-top: 10px; }
-        .reply-form { margin-top: 10px; display: flex; gap: 10px; }
-        .reply-form input { flex: 1; padding: 5px; border-radius: 15px; border: 1px solid #ccc; }
-        .reply-form button { padding: 5px 10px; font-size: 0.8em; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ホーム - K.K book</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        // Initial theme loader to prevent visual flash
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+            }
+        })();
+    </script>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>K.K book</h2>
+    <div class="app-container">
+        <!-- ==========================================
+             1. LEFT SIDEBAR (Navigation)
+             ========================================== -->
+        <div class="sidebar-left">
             <div>
-                <span>{{ current_user.username }}</span>
-                <a href="{{ url_for('logout') }}" style="margin-left: 10px; color: red; text-decoration: none;">Logout</a>
-            </div>
-        </div>
-
-        <form class="post-form" method="POST" action="{{ url_for('create_post') }}">
-            <textarea name="content" placeholder="What's happening?" required></textarea>
-            <button type="submit">Post</button>
-        </form>
-
-        <div class="timeline">
-            {% for post in posts %}
-            <div class="post">
-                <div class="post-author">{{ post.author.username }}</div>
-                <div class="post-content">{{ post.content }}</div>
-                <div class="post-actions">
-                    <form method="POST" action="{{ url_for('react_post', post_id=post.id) }}">
-                        <input type="hidden" name="reaction_type" value="like">
-                        {% set liked = post.reactions.filter_by(user_id=current_user.id, reaction_type='like').first() %}
-                        <button type="submit" class="action-btn" style="color: {{ 'red' if liked else '#666' }};">
-                            ❤️ {{ post.reactions.filter_by(reaction_type='like').count() }}
-                        </button>
-                    </form>
-                    <span>💬 {{ post.replies.count() }}</span>
+                <!-- Brand Section -->
+                <div class="brand-section">
+                    <div class="brand-logo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+                            <path d="M6 6h10" />
+                            <path d="M6 10h10" />
+                        </svg>
+                    </div>
+                    <span class="brand-name">K.K book</span>
                 </div>
                 
-                <!-- Reply Form -->
-                <form class="reply-form" method="POST" action="{{ url_for('reply_post', post_id=post.id) }}">
-                    <input type="text" name="content" placeholder="Reply..." required>
-                    <button type="submit">Reply</button>
-                </form>
+                <!-- Nav Menu -->
+                <div class="nav-menu">
+                    <a href="/" class="nav-item active">
+                        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                        <span>ホーム</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        <span>通知</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        <span>メッセージ</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <span>プロフィール</span>
+                    </a>
+                    
+                    <!-- Theme Toggle Button -->
+                    <button id="theme-toggle-btn" class="nav-item sidebar-theme-btn">
+                        <svg id="theme-toggle-dark-icon" viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                        <svg id="theme-toggle-light-icon" viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <span id="theme-toggle-text">テーマ切替</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Bottom Profile Card -->
+            <div class="user-profile-card">
+                <div class="user-info">
+                    <div class="avatar-placeholder">
+                        {{ current_user.username[0] }}
+                    </div>
+                    <span class="username-label" title="{{ current_user.username }}">{{ current_user.username }}</span>
+                </div>
+                <a href="{{ url_for('logout') }}" class="btn-logout" title="ログアウト">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </a>
+            </div>
+        </div>
 
-                <!-- Replies -->
-                {% if post.replies.count() > 0 %}
-                <div class="replies">
-                    {% for reply in post.replies.order_by(post.created_at.desc()).all() %}
-                    <div class="post" style="border: none; padding-bottom: 5px;">
-                        <div class="post-author">{{ reply.author.username }}</div>
-                        <div class="post-content">{{ reply.content }}</div>
-                        <div class="post-actions" style="margin-top: 5px;">
-                            <form method="POST" action="{{ url_for('react_post', post_id=reply.id) }}">
-                                <input type="hidden" name="reaction_type" value="like">
-                                {% set reply_liked = reply.reactions.filter_by(user_id=current_user.id, reaction_type='like').first() %}
-                                <button type="submit" class="action-btn" style="color: {{ 'red' if reply_liked else '#666' }};">
-                                    ❤️ {{ reply.reactions.filter_by(reaction_type='like').count() }}
-                                </button>
-                            </form>
+        <!-- ==========================================
+             2. CENTER TIMELINE
+             ========================================== -->
+        <div class="timeline">
+            <!-- Timeline Header -->
+            <div class="timeline-header">
+                <h2 class="timeline-title">ホーム</h2>
+            </div>
+            
+            <!-- Composer Card -->
+            <div class="composer-card">
+                <div class="composer-avatar">
+                    <div class="avatar-placeholder">
+                        {{ current_user.username[0] }}
+                    </div>
+                </div>
+                <form class="composer-form" method="POST" action="{{ url_for('create_post') }}">
+                    <textarea class="composer-textarea" name="content" placeholder="今なにしてる？" required></textarea>
+                    <div class="composer-actions">
+                        <button type="submit" class="btn-post">投稿する</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Feed -->
+            <div class="feed">
+                {% for post in posts %}
+                <div class="post-card">
+                    <div class="post-avatar-wrapper">
+                        <div class="avatar-placeholder">
+                            {{ post.author.username[0] }}
                         </div>
                     </div>
-                    {% endfor %}
+                    <div class="post-main">
+                        <!-- Post Header -->
+                        <div class="post-header">
+                            <span class="post-username">{{ post.author.username }}</span>
+                            <span class="post-meta">· {{ post.created_at.strftime('%m月%d日 %H:%M') }}</span>
+                        </div>
+                        
+                        <!-- Post Body -->
+                        <div class="post-body">{{ post.content }}</div>
+                        
+                        <!-- Post Actions -->
+                        <div class="post-footer">
+                            <!-- Like Action -->
+                            {% set liked = post.reactions.filter_by(user_id=current_user.id, reaction_type='like').first() %}
+                            <div class="action-wrapper action-like {{ 'liked' if liked else '' }}">
+                                <form method="POST" action="{{ url_for('react_post', post_id=post.id) }}">
+                                    <input type="hidden" name="reaction_type" value="like">
+                                    <button type="submit" class="action-trigger" title="いいね">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                        </svg>
+                                    </button>
+                                </form>
+                                <span class="action-count">{{ post.reactions.filter_by(reaction_type='like').count() }}</span>
+                            </div>
+                            
+                            <!-- Reply Action -->
+                            <div class="action-wrapper action-reply-trigger">
+                                <button type="button" class="action-trigger" title="返信する" onclick="document.getElementById('reply-form-{{ post.id }}').focus();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                                    </svg>
+                                </button>
+                                <span class="action-count">{{ post.replies.count() }}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Inline Reply Composer -->
+                        <div class="reply-composer-wrapper">
+                            <form class="reply-form-inline" method="POST" action="{{ url_for('reply_post', post_id=post.id) }}">
+                                <input class="reply-input-inline" id="reply-form-{{ post.id }}" type="text" name="content" placeholder="返信を投稿..." required autocomplete="off">
+                                <button type="submit" class="btn-reply-submit">返信</button>
+                            </form>
+                        </div>
+                        
+                        <!-- Replies List -->
+                        {% if post.replies.count() > 0 %}
+                        <div class="replies-section">
+                            {% for reply in post.ordered_replies %}
+                            <div style="display: flex; gap: 12px; padding: 4px 0;">
+                                <div class="avatar-placeholder" style="width: 28px; height: 28px; font-size: 0.8rem;">
+                                    {{ reply.author.username[0] }}
+                                </div>
+                                <div style="flex-grow: 1;">
+                                    <!-- Reply Header -->
+                                    <div class="post-header" style="margin-bottom: 2px;">
+                                        <span class="post-username" style="font-size: 0.875rem;">{{ reply.author.username }}</span>
+                                        <span class="post-meta" style="font-size: 0.75rem;">· {{ reply.created_at.strftime('%m月%d日 %H:%M') }}</span>
+                                    </div>
+                                    <!-- Reply Body -->
+                                    <div class="post-body" style="font-size: 0.9rem; margin-bottom: 4px;">{{ reply.content }}</div>
+                                    
+                                    <!-- Reply Actions -->
+                                    {% set reply_liked = reply.reactions.filter_by(user_id=current_user.id, reaction_type='like').first() %}
+                                    <div class="post-footer" style="margin-top: 4px; gap: 20px;">
+                                        <div class="action-wrapper action-like {{ 'liked' if reply_liked else '' }}">
+                                            <form method="POST" action="{{ url_for('react_post', post_id=reply.id) }}">
+                                                <input type="hidden" name="reaction_type" value="like">
+                                                <button type="submit" class="action-trigger" style="width: 28px; height: 28px;" title="いいね">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width: 15px; height: 15px;">
+                                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                            <span class="action-count" style="font-size: 0.75rem;">{{ reply.reactions.filter_by(reaction_type='like').count() }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
-                {% endif %}
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
     </div>
+    
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+        const toggleText = document.getElementById('theme-toggle-text');
+
+        function updateThemeUI(theme) {
+            if (theme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                lightIcon.style.display = 'none';
+                darkIcon.style.display = 'block';
+                toggleText.textContent = 'ダークモード';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                lightIcon.style.display = 'block';
+                darkIcon.style.display = 'none';
+                toggleText.textContent = 'ライトモード';
+            }
+        }
+
+        // Initial Theme application from localStorage
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        updateThemeUI(currentTheme);
+
+        themeToggleBtn.addEventListener('click', () => {
+            const activeTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', activeTheme);
+            updateThemeUI(activeTheme);
+        });
+    </script>
 </body>
 </html>
